@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Matchmaker - Find Your Perfect Car</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    
+    <main>
+        <!-- Hero Section -->
+        <section class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
+            <div class="container mx-auto px-4 text-center">
+                <h1 class="text-5xl font-bold mb-6">Find Your Perfect Car Match</h1>
+                <p class="text-xl mb-8 max-w-2xl mx-auto">
+                    Confused by too many options? Answer a few simple questions and get personalized recommendations 
+                    based on transparent scoring algorithms.
+                </p>
+                <a th:href="@{/quiz}" class="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition shadow-lg">
+                    Find My Car →
+                </a>
+            </div>
+        </section>
+        
+        <!-- How It Works -->
+        <section class="py-16">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">How It Works</h2>
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div class="text-center">
+                        <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl">📝</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">1. Take Quiz</h3>
+                        <p class="text-gray-600">Tell us your budget, needs, and preferences</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl">🎯</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">2. Get Matches</h3>
+                        <p class="text-gray-600">See top 5 cars ranked with transparent scoring</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl">🔍</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">3. Browse & Filter</h3>
+                        <p class="text-gray-600">Explore all cars with advanced filters</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl">⚖️</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">4. Compare</h3>
+                        <p class="text-gray-600">Side-by-side comparison of shortlisted cars</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Features -->
+        <section class="bg-white py-16">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Why Car Matchmaker?</h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="p-6 border rounded-lg">
+                        <h3 class="font-bold text-xl mb-3 text-blue-600">🎯 Transparent Ranking</h3>
+                        <p class="text-gray-600">Our algorithm scores cars on 8 factors: budget fit, use case, mileage, safety, reviews, and more. No hidden magic.</p>
+                    </div>
+                    <div class="p-6 border rounded-lg">
+                        <h3 class="font-bold text-xl mb-3 text-blue-600">📊 Real Data</h3>
+                        <p class="text-gray-600">25+ popular Indian cars with real specs, safety ratings, mileage, and user reviews. Updated regularly.</p>
+                    </div>
+                    <div class="p-6 border rounded-lg">
+                        <h3 class="font-bold text-xl mb-3 text-blue-600">💡 Clear Explanations</h3>
+                        <p class="text-gray-600">Every recommendation shows why it matches you and what tradeoffs to consider. No surprises.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- CTA Section -->
+        <section class="bg-gradient-to-r from-green-500 to-green-700 text-white py-16">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-3xl font-bold mb-4">Ready to Find Your Perfect Car?</h2>
+                <p class="text-xl mb-8">Takes less than 2 minutes. No signup required.</p>
+                <a th:href="@{/quiz}" class="inline-block bg-white text-green-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition shadow-lg">
+                    Start Quiz Now →
+                </a>
+            </div>
+        </section>
+        
+        <!-- Quick Browse -->
+        <section class="py-16">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-4 text-gray-800">Or Browse All Cars</h2>
+                    <a th:href="@{/cars}" class="text-blue-600 hover:text-blue-800 font-semibold">
+                        View All 25+ Cars →
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; <span th:text="${T(java.time.Year).now().value}"></span> Car Matchmaker. Helping you find your perfect car.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Cars - Car Matchmaker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body class="bg-gray-50">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold mb-8 text-gray-800">Browse All Cars</h1>
+        
+        <!-- Filters -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-xl font-bold mb-4 text-gray-700">Filter & Sort</h2>
+            <form th:action="@{/cars}" method="get" class="space-y-4">
+                <div class="grid md:grid-cols-3 gap-4">
+                    <!-- Budget -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Min Price (Lakhs)</label>
+                        <input type="number" name="minPrice" th:value="${filter.minPrice}" step="0.1" 
+                               class="w-full px-3 py-2 border rounded-lg" placeholder="5.0">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Max Price (Lakhs)</label>
+                        <input type="number" name="maxPrice" th:value="${filter.maxPrice}" step="0.1" 
+                               class="w-full px-3 py-2 border rounded-lg" placeholder="15.0">
+                    </div>
+                    
+                    <!-- Make -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Make</label>
+                        <select name="make" class="w-full px-3 py-2 border rounded-lg">
+                            <option value="">All Makes</option>
+                            <option th:each="make : ${makes}" 
+                                    th:value="${make}" 
+                                    th:text="${make}"
+                                    th:selected="${filter.make == make}">Make</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="grid md:grid-cols-4 gap-4">
+                    <!-- Body Type -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Body Type</label>
+                        <select name="bodyType" class="w-full px-3 py-2 border rounded-lg">
+                            <option value="">All Types</option>
+                            <option th:each="bodyType : ${bodyTypes}" 
+                                    th:if="${bodyType.name() != 'NO_PREFERENCE'}"
+                                    th:value="${bodyType}" 
+                                    th:text="${bodyType.displayName}"
+                                    th:selected="${filter.bodyType != null and filter.bodyType.name() == bodyType.name()}">Body Type</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Fuel Type -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Fuel Type</label>
+                        <select name="fuelType" class="w-full px-3 py-2 border rounded-lg">
+                            <option value="">All Fuels</option>
+                            <option th:each="fuelType : ${fuelTypes}" 
+                                    th:if="${fuelType.name() != 'NO_PREFERENCE'}"
+                                    th:value="${fuelType}" 
+                                    th:text="${fuelType.displayName}"
+                                    th:selected="${filter.fuelType != null and filter.fuelType.name() == fuelType.name()}">Fuel Type</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Transmission -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Transmission</label>
+                        <select name="transmission" class="w-full px-3 py-2 border rounded-lg">
+                            <option value="">All Types</option>
+                            <option th:each="transmission : ${transmissions}" 
+                                    th:if="${transmission.name() != 'NO_PREFERENCE'}"
+                                    th:value="${transmission}" 
+                                    th:text="${transmission.displayName}"
+                                    th:selected="${filter.transmission != null and filter.transmission.name() == transmission.name()}">Transmission</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Safety Rating -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Min Safety Rating</label>
+                        <select name="minSafetyRating" class="w-full px-3 py-2 border rounded-lg">
+                            <option value="">Any</option>
+                            <option value="3.0" th:selected="${filter.minSafetyRating == 3.0}">3+ Stars</option>
+                            <option value="4.0" th:selected="${filter.minSafetyRating == 4.0}">4+ Stars</option>
+                            <option value="5.0" th:selected="${filter.minSafetyRating == 5.0}">5 Stars</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-4">
+                    <!-- Sort By -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Sort By</label>
+                        <select name="sortBy" class="w-full px-3 py-2 border rounded-lg">
+                            <option value="">Default</option>
+                            <option value="price" th:selected="${filter.sortBy == 'price'}">Price (Low to High)</option>
+                            <option value="mileage" th:selected="${filter.sortBy == 'mileage'}">Mileage (High to Low)</option>
+                            <option value="safety" th:selected="${filter.sortBy == 'safety'}">Safety Rating (High to Low)</option>
+                            <option value="rating" th:selected="${filter.sortBy == 'rating'}">User Rating (High to Low)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex gap-4">
+                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold">
+                        Apply Filters
+                    </button>
+                    <a th:href="@{/cars}" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-semibold">
+                        Clear All
+                    </a>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Results Count -->
+        <div class="mb-6">
+            <p class="text-gray-600">
+                Showing <span class="font-bold" th:text="${cars.size()}">25</span> cars
+            </p>
+        </div>
+        
+        <!-- Car Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" th:if="${!cars.isEmpty()}">
+            <div th:each="car : ${cars}">
+                <div th:replace="~{fragments/car-card :: car-card}"></div>
+            </div>
+        </div>
+        
+        <!-- Empty State -->
+        <div th:if="${cars.isEmpty()}" class="text-center py-16">
+            <p class="text-2xl text-gray-600 mb-4">No cars match your filters</p>
+            <a th:href="@{/cars}" class="text-blue-600 hover:text-blue-800 font-semibold">
+                Clear filters and try again
+            </a>
+        </div>
+    </main>
+    
+    <footer class="bg-gray-800 text-white py-6 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; <span th:text="${T(java.time.Year).now().value}"></span> Car Matchmaker. Helping you find your perfect car.</p>
+        </div>
+    </footer>
+</body>
+</html>

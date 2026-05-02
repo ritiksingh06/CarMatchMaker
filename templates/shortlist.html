@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Shortlist - Car Matchmaker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body class="bg-gray-50">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold mb-2 text-gray-800">My Shortlist</h1>
+        <p class="text-gray-600 mb-8">Cars you've saved for comparison</p>
+        
+        <!-- Compare Button -->
+        <div class="mb-8" th:if="${!cars.isEmpty()}">
+            <a th:href="@{/compare}" class="inline-block px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold shadow-lg">
+                Compare All Shortlisted Cars →
+            </a>
+        </div>
+        
+        <!-- Shortlisted Cars -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" th:if="${!cars.isEmpty()}">
+            <div th:each="car : ${cars}">
+                <div th:replace="~{fragments/car-card :: car-card}"></div>
+            </div>
+        </div>
+        
+        <!-- Empty State -->
+        <div th:if="${cars.isEmpty()}" class="text-center py-16">
+            <div class="text-6xl mb-4">📋</div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Your shortlist is empty</h2>
+            <p class="text-gray-600 mb-8">Start adding cars to compare them later</p>
+            <div class="flex justify-center gap-4">
+                <a th:href="@{/quiz}" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold">
+                    Take Quiz
+                </a>
+                <a th:href="@{/cars}" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition font-semibold">
+                    Browse Cars
+                </a>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="bg-gray-800 text-white py-6 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; <span th:text="${T(java.time.Year).now().value}"></span> Car Matchmaker. Helping you find your perfect car.</p>
+        </div>
+    </footer>
+</body>
+</html>

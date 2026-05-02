@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz - Car Matchmaker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    
+    <main class="container mx-auto px-4 py-8 max-w-3xl">
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <h1 class="text-3xl font-bold mb-2 text-gray-800">Find Your Perfect Car</h1>
+            <p class="text-gray-600 mb-8">Answer a few questions to get personalized recommendations</p>
+            
+            <form th:action="@{/quiz}" th:object="${preferenceForm}" method="post" class="space-y-6">
+                
+                <!-- Budget -->
+                <div class="border-b pb-6">
+                    <h2 class="text-xl font-bold mb-4 text-gray-700">Budget (in Lakhs ₹)</h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Minimum Budget</label>
+                            <input type="number" th:field="*{budgetMin}" step="0.1" min="0" 
+                                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" 
+                                   placeholder="5.0" required>
+                            <p th:if="${#fields.hasErrors('budgetMin')}" th:errors="*{budgetMin}" 
+                               class="text-red-500 text-sm mt-1"></p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Maximum Budget</label>
+                            <input type="number" th:field="*{budgetMax}" step="0.1" min="0" 
+                                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" 
+                                   placeholder="15.0" required>
+                            <p th:if="${#fields.hasErrors('budgetMax')}" th:errors="*{budgetMax}" 
+                               class="text-red-500 text-sm mt-1"></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Use Case -->
+                <div class="border-b pb-6">
+                    <h2 class="text-xl font-bold mb-4 text-gray-700">Primary Use Case</h2>
+                    <div class="space-y-2">
+                        <div th:each="useCase : ${useCases}">
+                            <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition">
+                                <input type="radio" th:field="*{useCase}" th:value="${useCase}" class="mr-3" required>
+                                <span th:text="${useCase.displayName}">Use Case</span>
+                            </label>
+                        </div>
+                    </div>
+                    <p th:if="${#fields.hasErrors('useCase')}" th:errors="*{useCase}" 
+                       class="text-red-500 text-sm mt-1"></p>
+                </div>
+                
+                <!-- Body Type -->
+                <div class="border-b pb-6">
+                    <h2 class="text-xl font-bold mb-4 text-gray-700">Preferred Body Type</h2>
+                    <div class="space-y-2">
+                        <div th:each="bodyType : ${bodyTypes}">
+                            <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition">
+                                <input type="radio" th:field="*{bodyTypePreference}" th:value="${bodyType}" class="mr-3" required>
+                                <span th:text="${bodyType.displayName}">Body Type</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Fuel Type -->
+                <div class="border-b pb-6">
+                    <h2 class="text-xl font-bold mb-4 text-gray-700">Fuel Preference</h2>
+                    <div class="space-y-2">
+                        <div th:each="fuelType : ${fuelTypes}">
+                            <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition">
+                                <input type="radio" th:field="*{fuelPreference}" th:value="${fuelType}" class="mr-3" required>
+                                <span th:text="${fuelType.displayName}">Fuel Type</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Transmission -->
+                <div class="border-b pb-6">
+                    <h2 class="text-xl font-bold mb-4 text-gray-700">Transmission Preference</h2>
+                    <div class="space-y-2">
+                        <div th:each="transmission : ${transmissions}">
+                            <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition">
+                                <input type="radio" th:field="*{transmissionPreference}" th:value="${transmission}" class="mr-3" required>
+                                <span th:text="${transmission.displayName}">Transmission</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Priorities -->
+                <div class="border-b pb-6">
+                    <h2 class="text-xl font-bold mb-4 text-gray-700">Your Priorities (Select All That Apply)</h2>
+                    <div class="space-y-2">
+                        <div th:each="priority : ${priorities}">
+                            <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition">
+                                <input type="checkbox" th:field="*{priorities}" th:value="${priority}" class="mr-3">
+                                <span th:text="${priority.displayName}">Priority</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Must Haves -->
+                <div class="pb-6">
+                    <h2 class="text-xl font-bold mb-4 text-gray-700">Must-Have Features (Optional)</h2>
+                    <div class="space-y-2">
+                        <div th:each="mustHave : ${mustHaves}">
+                            <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition">
+                                <input type="checkbox" th:field="*{mustHaves}" th:value="${mustHave}" class="mr-3">
+                                <span th:text="${mustHave.displayName}">Must Have</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Submit -->
+                <div class="pt-4">
+                    <button type="submit" 
+                            class="w-full bg-blue-600 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-blue-700 transition shadow-lg">
+                        Get My Recommendations →
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+    
+    <footer class="bg-gray-800 text-white py-6 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; <span th:text="${T(java.time.Year).now().value}"></span> Car Matchmaker. Helping you find your perfect car.</p>
+        </div>
+    </footer>
+</body>
+</html>
