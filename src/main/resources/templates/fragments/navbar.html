@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <nav th:fragment="navbar" class="bg-blue-600 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a th:href="@{/}" class="text-2xl font-bold">🚗 Car Matchmaker</a>
+                <div class="flex space-x-4">
+                    <a th:href="@{/quiz}" class="hover:text-blue-200 px-3 py-2 rounded transition">Take Quiz</a>
+                    <a th:href="@{/cars}" class="hover:text-blue-200 px-3 py-2 rounded transition">Browse Cars</a>
+                    <a th:href="@{/shortlist}" class="hover:text-blue-200 px-3 py-2 rounded transition">Shortlist</a>
+                    <a th:href="@{/compare}" class="hover:text-blue-200 px-3 py-2 rounded transition">Compare</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</body>
+</html>

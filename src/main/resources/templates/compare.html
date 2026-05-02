@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Cars - Car Matchmaker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold mb-2 text-gray-800">Compare Cars</h1>
+        <p class="text-gray-600 mb-8">Side-by-side comparison of your shortlisted cars</p>
+        
+        <!-- Error State -->
+        <div th:if="${error}" class="text-center py-16">
+            <div class="text-6xl mb-4">⚠️</div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2" th:text="${error}">Error message</h2>
+            <div class="flex justify-center gap-4 mt-8">
+                <a th:href="@{/quiz}" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold">
+                    Take Quiz
+                </a>
+                <a th:href="@{/cars}" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition font-semibold">
+                    Browse Cars
+                </a>
+            </div>
+        </div>
+        
+        <!-- Comparison Table -->
+        <div th:if="${cars != null && !cars.isEmpty()}" class="bg-white rounded-lg shadow-lg overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="px-4 py-3 text-left font-bold text-gray-700 sticky left-0 bg-gray-100">Specification</th>
+                        <th th:each="car : ${cars}" class="px-4 py-3 text-center font-bold text-gray-700 min-w-[200px]">
+                            <div th:text="${car.fullName}">Car Name</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Price -->
+                    <tr class="border-t">
+                        <td class="px-4 py-3 font-semibold bg-gray-50 sticky left-0">Price Range</td>
+                        <td th:each="car : ${cars}" class="px-4 py-3 text-center"
+                            th:classappend="${car == cheapest ? 'bg-green-100 font-bold' : ''}">
+                            <span th:text="${car.priceRange}">Price</span>
+                            <span th:if="${car == cheapest}" class="block text-xs text-green-700 mt-1">🏆 Best Value</span>
+                        </td>
+                    </tr>
+                    
+                    <!-- Body Type -->
+                    <tr class="border-t bg-gray-50">
+                        <td class="px-4 py-3 font-semibold sticky left-0 bg-gray-100">Body Type</td>
+                        <td th:each="car : ${cars}" class="px-4 py-3 text-center" th:text="${car.bodyType.displayName}">Body Type</td>
+                    </tr>
+                    
+                    <!-- Mileage -->
+                    <tr class="border-t">
+                        <td class="px-4 py-3 font-semibold bg-gray-50 sticky left-0">Mileage (km/l)</td>
+                        <td th:each="car : ${cars}" class="px-4 py-3 text-center"
+                            th:classappend="${car == bestMileage ? 'bg-green-100 font-bold' : ''}">
+                            <span th:text="${car.mileage}">20</span>
+                            <span th:if="${car == bestMileage}" class="block text-xs text-green-700 mt-1">🏆 Best Mileage</span>
+                        </td>
+                    </tr>
+                    
+                    <!-- Safety Rating -->
+                    <tr class="border-t bg-gray-50">
+                        <td class="px-4 py-3 font-semibold sticky left-0 bg-gray-100">Safety Rating</td>
+                        <td th:each="car : ${cars}" class="px-4 py-3 text-center"
+                            th:classappend="${car == safest ? 'bg-green-100 font-bold' : ''}">
+                            <span th:text="${car.safetyRating + ' ⭐'}">4.0 ⭐</span>
+                            <span th:if="${car == safest}" class="block text-xs text-green-700 mt-1">🏆 Safest</span>
+                        </td>
+                    </tr>
+                    
+                    <!-- User Rating -->
+                    <tr class="border-t">
+                        <td class="px-4 py-3 font-semibold bg-gray-50 sticky left-0">User Rating</td>
+                        <td th:each="car : ${cars}" class="px-4 py-3 text-center"
+                            th:classappend="${car == bestRated ? 'bg-green-100 font-bold' : ''}">
+                            <span th:text="${car.userRating + ' ⭐'}">4.5 ⭐</span>
+                            <span th:if="${car == bestRated}" class="block text-xs text-green-700 mt-1">🏆 Top Rated</span>
+                        </td>
+                    </tr>
+                    
+                    <!-- Fuel Type -->
+                    <tr class="border-t bg-gray-50">
+                        <td class="px-4 py-3 font-semibold sticky left-0 bg-gray-100">Fuel Type</td>
+                        <td th:each="car : ${cars}" class="px-4 py-3 text-center" th:text="${car.fuelType.displayName}">Petrol</td>
+                    </tr>
+                    
+                    <!-- Transmission -->
+                    <tr class="border-t">
+                        <td class="px-4 py-3 font-semibold bg-gray-50 sticky left-0">Transmission</td>
+                        <td th:each="car : ${cars}" class="px-4 py-3 text-center" th:text="${car.transmission.displayName}">Manual</td>
+                    </tr>
+                    
+                    <!-- Boot Space -->
+                    <tr class="border-t bg-gray-50">
+                        <td class="px-4 py-3 font-semibold sticky left-0 bg-gray-100">Boot Space (L)</td>
+                        <td th:each="car : ${cars}" class="px-4 py-3 text-center"
+                            th:classappend="${car == largestBoot ? 'bg-green-100 font-bold' : ''}">
+                            <span th:text="${car.bootSpace != null ? car.bootSpace + 'L' : 'N/A'}">350L</span>
+                            <span th:if="${car == largestBoot}" class="block text-xs text-green-700 mt-1">🏆 Most Space</span>
+                        </td>
+                    </tr>
+                    
+                    <!-- Seats -->
+                    <tr class="border-t">
+                        <td class="px-4 py-3 font-semibold bg-gray-50 sticky left-0">Seats</td>
+                        <td th:each="car : ${cars}" class="px-4 py-3 text-center" th:text="${car.seats}">5</td>
+                    </tr>
+                    
+                    <!-- Engine -->
+                    <tr class="border-t bg-gray-50">
+                        <td class="px-4 py-3 font-semibold sticky left-0 bg-gray-100">Engine</td>
+                        <td th:each="car : ${cars}" class="px-4 py-3 text-center text-sm" th:text="${car.engine}">1.5L</td>
+                    </tr>
+                    
+                    <!-- Pros -->
+                    <tr class="border-t">
+                        <td class="px-4 py-3 font-semibold bg-gray-50 sticky left-0">✓ Pros</td>
+                        <td th:each="car : ${cars}" class="px-4 py-3 text-sm text-left" th:text="${car.pros}">Pros</td>
+                    </tr>
+                    
+                    <!-- Cons -->
+                    <tr class="border-t bg-gray-50">
+                        <td class="px-4 py-3 font-semibold sticky left-0 bg-gray-100">⚠ Cons</td>
+                        <td th:each="car : ${cars}" class="px-4 py-3 text-sm text-left" th:text="${car.cons}">Cons</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Recommendation based on preference -->
+        <div th:if="${preference != null && cars != null && !cars.isEmpty()}" class="mt-8 bg-blue-50 border-2 border-blue-200 rounded-lg p-6">
+            <h2 class="text-xl font-bold mb-3 text-blue-900">📊 Based On Your Preferences:</h2>
+            <div class="text-gray-700 space-y-2">
+                <p><span class="font-semibold">Budget:</span> ₹<span th:text="${preference.budgetMin}">5</span> - ₹<span th:text="${preference.budgetMax}">15</span> Lakh</p>
+                <p><span class="font-semibold">Use Case:</span> <span th:text="${preference.useCase.displayName}">City Commute</span></p>
+                <p><span class="font-semibold">Priorities:</span> 
+                    <span th:each="priority, iterStat : ${preference.priorities}">
+                        <span th:text="${priority.displayName}">Priority</span><span th:if="${!iterStat.last}">, </span>
+                    </span>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="mt-8 flex justify-center gap-4">
+            <a th:href="@{/cars}" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition font-semibold">
+                Browse More Cars
+            </a>
+            <a th:href="@{/quiz}" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold">
+                Retake Quiz
+            </a>
+        </div>
+    </main>
+    
+    <footer class="bg-gray-800 text-white py-6 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2024 Car Matchmaker. Helping you find your perfect car.</p>
+        </div>
+    </footer>
+</body>
+</html>

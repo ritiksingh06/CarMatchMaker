@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Car Matchmaker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    
+    <main class="container mx-auto px-4 py-16">
+        <div class="max-w-2xl mx-auto text-center">
+            <div class="text-6xl mb-6">⚠️</div>
+            <h1 class="text-4xl font-bold mb-4 text-gray-800">Oops! Something went wrong</h1>
+            <p class="text-gray-600 mb-8" th:text="${message}">An unexpected error occurred</p>
+            <div class="flex justify-center gap-4">
+                <a th:href="@{/}" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold">
+                    Go Home
+                </a>
+                <a th:href="@{/quiz}" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition font-semibold">
+                    Take Quiz
+                </a>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="bg-gray-800 text-white py-6 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2024 Car Matchmaker. Helping you find your perfect car.</p>
+        </div>
+    </footer>
+</body>
+</html>

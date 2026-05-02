@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div th:fragment="car-card" class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition fade-in">
+        <div class="p-6">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800" th:text="${car.fullName}">Car Name</h3>
+                    <p class="text-sm text-gray-600" th:text="${car.bodyType.displayName}">Body Type</p>
+                </div>
+                <div th:fragment="shortlist-button" class="ml-4">
+                    <form th:if="${!shortlistService.isCarInShortlist(car.id)}" 
+                          th:action="@{/shortlist/{id}(id=${car.id})}" 
+                          method="post"
+                          th:hx-post="@{/shortlist/{id}(id=${car.id})}"
+                          hx-swap="outerHTML"
+                          hx-target="this">
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm">
+                            + Shortlist
+                        </button>
+                    </form>
+                    <form th:if="${shortlistService.isCarInShortlist(car.id)}" 
+                          th:action="@{/shortlist/{id}/remove(id=${car.id})}" 
+                          method="post"
+                          th:hx-post="@{/shortlist/{id}/remove(id=${car.id})}"
+                          hx-swap="outerHTML"
+                          hx-target="this">
+                        <button type="submit" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition text-sm">
+                            ✓ Shortlisted
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="space-y-2 mb-4">
+                <div class="flex items-center text-sm">
+                    <span class="font-semibold w-24">Price:</span>
+                    <span th:text="${car.priceRange}">₹10-15 Lakh</span>
+                </div>
+                <div class="flex items-center text-sm">
+                    <span class="font-semibold w-24">Mileage:</span>
+                    <span th:text="${car.mileage + ' km/l'}">20 km/l</span>
+                </div>
+                <div class="flex items-center text-sm">
+                    <span class="font-semibold w-24">Safety:</span>
+                    <span th:text="${car.safetyRating + ' ⭐'}">4.0 ⭐</span>
+                </div>
+                <div class="flex items-center text-sm">
+                    <span class="font-semibold w-24">User Rating:</span>
+                    <span th:text="${car.userRating + ' ⭐'}">4.5 ⭐</span>
+                </div>
+                <div class="flex items-center text-sm">
+                    <span class="font-semibold w-24">Fuel:</span>
+                    <span th:text="${car.fuelType.displayName}">Petrol</span>
+                </div>
+                <div class="flex items-center text-sm">
+                    <span class="font-semibold w-24">Transmission:</span>
+                    <span th:text="${car.transmission.displayName}">Manual</span>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <p class="text-sm text-green-700 font-medium mb-1">✓ Pros:</p>
+                <p class="text-sm text-gray-600" th:text="${car.pros}">Pros</p>
+            </div>
+            
+            <div>
+                <p class="text-sm text-orange-700 font-medium mb-1">⚠ Cons:</p>
+                <p class="text-sm text-gray-600" th:text="${car.cons}">Cons</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
