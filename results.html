@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Recommendations - Car Matchmaker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body class="bg-gray-50">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-4xl font-bold mb-2 text-gray-800">Your Top 5 Car Matches</h1>
+            <p class="text-gray-600 mb-8">Based on your preferences, here are your best matches ranked by fit score</p>
+            
+            <!-- Recommendations -->
+            <div class="space-y-6">
+                <div th:each="result, iterStat : ${recommendations}" 
+                     class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="p-6">
+                        <!-- Header with rank and score -->
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="flex items-center">
+                                <span class="text-4xl font-bold text-blue-600 mr-4" 
+                                      th:text="${'#' + (iterStat.index + 1)}">
+                                    #1
+                                </span>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-800" 
+                                        th:text="${result.car.fullName}">Car Name</h2>
+                                    <p class="text-gray-600" th:text="${result.car.priceRange}">Price Range</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-3xl font-bold" 
+                                     th:classappend="${result.scorePercentage >= 80 ? 'text-green-600' : 
+                                                      result.scorePercentage >= 60 ? 'text-blue-600' : 
+                                                      result.scorePercentage >= 40 ? 'text-yellow-600' : 'text-red-600'}"
+                                     th:text="${result.scorePercentage + '%'}">
+                                    85%
+                                </div>
+                                <p class="text-sm text-gray-600">Match Score</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Match score bar -->
+                        <div class="mb-6">
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="h-3 rounded-full transition-all"
+                                     th:classappend="${result.scorePercentage >= 80 ? 'bg-green-500' : 
+                                                      result.scorePercentage >= 60 ? 'bg-blue-500' : 
+                                                      result.scorePercentage >= 40 ? 'bg-yellow-500' : 'bg-red-500'}"
+                                     th:style="'width: ' + ${result.scorePercentage} + '%'">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6 mb-6">
+                            <!-- Key Specs -->
+                            <div>
+                                <h3 class="font-bold text-lg mb-3 text-gray-700">Key Specs</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Body Type:</span>
+                                        <span class="font-medium" th:text="${result.car.bodyType.displayName}">SUV</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Fuel:</span>
+                                        <span class="font-medium" th:text="${result.car.fuelType.displayName}">Petrol</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Transmission:</span>
+                                        <span class="font-medium" th:text="${result.car.transmission.displayName}">Manual</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Mileage:</span>
+                                        <span class="font-medium" th:text="${result.car.mileage + ' km/l'}">20 km/l</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Safety Rating:</span>
+                                        <span class="font-medium" th:text="${result.car.safetyRating + ' ⭐'}">4.0 ⭐</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">User Rating:</span>
+                                        <span class="font-medium" th:text="${result.car.userRating + ' ⭐'}">4.5 ⭐</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Best Variant -->
+                            <div th:if="${result.bestVariant != null}">
+                                <h3 class="font-bold text-lg mb-3 text-gray-700">Best Variant For You</h3>
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <p class="font-bold text-blue-900" th:text="${result.bestVariant.name}">Variant Name</p>
+                                    <p class="text-blue-700 font-semibold mt-1" th:text="${result.bestVariant.priceFormatted}">₹12.5 Lakh</p>
+                                    <p class="text-sm text-blue-800 mt-2" th:text="${result.bestVariant.keyFeatures}">Features</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Match Reasons -->
+                        <div class="mb-4">
+                            <h3 class="font-bold text-lg mb-3 text-green-700">✓ Why This Matches You</h3>
+                            <ul class="space-y-1">
+                                <li th:each="reason : ${result.matchReasons}" 
+                                    class="text-sm text-gray-700 flex items-start">
+                                    <span class="text-green-500 mr-2">•</span>
+                                    <span th:text="${reason}">Match reason</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Tradeoffs -->
+                        <div class="mb-6" th:if="${!result.tradeoffs.isEmpty()}">
+                            <h3 class="font-bold text-lg mb-3 text-orange-700">⚠ Tradeoffs to Consider</h3>
+                            <ul class="space-y-1">
+                                <li th:each="tradeoff : ${result.tradeoffs}" 
+                                    class="text-sm text-gray-700 flex items-start">
+                                    <span class="text-orange-500 mr-2">•</span>
+                                    <span th:text="${tradeoff}">Tradeoff</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Actions -->
+                        <div class="flex gap-4">
+                            <form th:if="${!shortlistService.isCarInShortlist(result.car.id)}" 
+                                  th:action="@{/shortlist/{id}(id=${result.car.id})}" 
+                                  method="post"
+                                  th:hx-post="@{/shortlist/{id}(id=${result.car.id})}"
+                                  hx-swap="outerHTML"
+                                  hx-target="this">
+                                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold">
+                                    + Add to Shortlist
+                                </button>
+                            </form>
+                            <form th:if="${shortlistService.isCarInShortlist(result.car.id)}" 
+                                  th:action="@{/shortlist/{id}/remove(id=${result.car.id})}" 
+                                  method="post"
+                                  th:hx-post="@{/shortlist/{id}/remove(id=${result.car.id})}"
+                                  hx-swap="outerHTML"
+                                  hx-target="this">
+                                <button type="submit" class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition font-semibold">
+                                    ✓ Shortlisted
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="mt-12 text-center space-y-4">
+                <p class="text-gray-600">Want to explore more options?</p>
+                <div class="flex justify-center gap-4">
+                    <a th:href="@{/cars}" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition font-semibold">
+                        Browse All Cars
+                    </a>
+                    <a th:href="@{/compare}" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold">
+                        Compare Shortlisted Cars
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="bg-gray-800 text-white py-6 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; <span th:text="${T(java.time.Year).now().value}"></span> Car Matchmaker. Helping you find your perfect car.</p>
+        </div>
+    </footer>
+</body>
+</html>
